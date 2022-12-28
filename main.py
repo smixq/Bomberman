@@ -57,16 +57,16 @@ walls_sprites = pygame.sprite.Group()
 
 player = intangible.Player('player.png', wall_size, wall_size * 2, all_sprites, intangible_sprites)
 for i in range(31):
-    tangible.metallic_wall('wall.png', wall_size * i, wall_size, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, all_sprites, walls_sprites)
 for i in range(31):
-    tangible.metallic_wall('wall.png', wall_size * i, H - wall_size, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, all_sprites, walls_sprites)
 for i in range(1, 15):
-    tangible.metallic_wall('wall.png', 0, wall_size * i, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, all_sprites, walls_sprites)
 for i in range(1, 15):
-    tangible.metallic_wall('wall.png', W, wall_size * i, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, all_sprites, walls_sprites)
 for i in range(2, 29, 2):
     for j in range(3, 14, 2):
-        tangible.metallic_wall('wall.png', wall_size * i, wall_size * j, all_sprites, walls_sprites)
+        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, all_sprites, walls_sprites)
 # for i in range(15):
 #     tangible.metallic_wall('wall.png', 128 * i, 0, all_sprites, walls_sprites)
 # for i in range(1, 10):
