@@ -1,7 +1,7 @@
 import pygame
 import os
 
-
+wall_size = 64
 
 class metallic_wall(pygame.sprite.Sprite):
     def __init__(self, image_name, x, y, *sprite_group):
@@ -10,12 +10,18 @@ class metallic_wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.pos_one = x
+        self.pos_two = x - wall_size
 
     def update(self, direction):
         if direction == 'r':
-            self.rect.x -= 4
+            self.rect.x = self.pos_two
         if direction == 'l':
-            self.rect.x += 4
+            self.rect.x = self.pos_one
+        # if self.rect.x >= 1980:
+        #     self.rect.x = 1980
+        # if self.rect.x <= 0:
+        #     self.rect.x = 0
 
 
 

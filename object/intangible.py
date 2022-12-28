@@ -5,6 +5,8 @@ p_speed = 4
 W, H = 1920, 1024
 wall_size = 64
 player_size = (37, 59)
+shift = W // 2 + wall_size
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_name, x, y, *sprite_group):
@@ -13,6 +15,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.pos_one = shift
+        self.pos_two = shift
+        self.wall_site = 'l'
 
     def update(self, result, walls_group):
         # lst_keys = pygame.key.get_pressed()
@@ -25,7 +30,7 @@ class Player(pygame.sprite.Sprite):
         #     self.rect.y -= 10
         # elif args[0] == pygame.K_DOWN:
         #     self.rect.y += 10
-        shift = W // 2 + wall_size
+
         if result == 'r':
             self.rect.x += p_speed
             if pygame.sprite.spritecollideany(self, walls_group):
@@ -33,8 +38,10 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.rect.x += p_speed
                 if not pygame.sprite.spritecollideany(self, walls_group):
-                    if shift >= self.rect.x  + p_speed >= W // 2:
+                    if shift + wall_size == self.rect.x and self.wall_site == 'l':
+                        self.wall_site = 'r'
                         walls_group.update('r')
+                        self.rect.x = self.pos_one
                 self.rect.x -= p_speed
 
         if result == 'l':
@@ -44,8 +51,10 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.rect.x -= p_speed
                 if not pygame.sprite.spritecollideany(self, walls_group):
-                    if shift >= self.rect.x + p_speed >= W // 2:
+                    if shift - wall_size == self.rect.x and self.wall_site == 'r':
+                        self.wall_site = 'l'
                         walls_group.update('l')
+                        self.rect.x = self.pos_two
                 self.rect.x += p_speed
 
         if result == 'u':
