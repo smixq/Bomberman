@@ -1,5 +1,5 @@
 import pygame
-
+from random import choice
 import sys
 from object import intangible, tangible
 
@@ -18,9 +18,22 @@ keys_p_two = [pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT]
 wall_size = 64
 player_size = (37, 59)
 
+cords = []
+for y in range(2, 15):
+    for x in range(1, 30):
+        if x == 1 and y == 2:
+            continue
+        elif x == 2 and y == 2:
+            continue
+        elif x == 1 and y == 3:
+            continue
+        cords.append((x * wall_size, y * wall_size))
+
 all_sprites = pygame.sprite.Group()
 intangible_sprites = pygame.sprite.Group()
-walls_sprites = pygame.sprite.Group()
+movable = pygame.sprite.Group()
+destroyed = pygame.sprite.Group()
+bomb = pygame.sprite.Group()
 # hor_UP_walls = pygame.sprite.Group()
 # vert_LEFT_walls = pygame.sprite.Group()
 # hor_DOWN_walls = pygame.sprite.Group()
@@ -55,18 +68,28 @@ walls_sprites = pygame.sprite.Group()
 #             self.rect.y += 5
 
 
-player = intangible.Player('player.png', wall_size, wall_size * 2, all_sprites, intangible_sprites)
+player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png', 'Bomberman_left.png', wall_size, wall_size * 2, all_sprites, intangible_sprites)
 for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, all_sprites, movable)
 for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, all_sprites, movable)
 for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, all_sprites, movable)
 for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, all_sprites, walls_sprites)
+    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, all_sprites, movable)
+hoary_cords = []
 for i in range(2, 29, 2):
     for j in range(3, 14, 2):
-        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, all_sprites, walls_sprites)
+        hoary_cords.append((wall_size * i, wall_size * j))
+        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, all_sprites, movable)
+count_walls = 0
+while count_walls != 10:
+    rand_cords = choice(cords)
+    if rand_cords in hoary_cords:
+        continue
+    hoary_cords.append(rand_cords)
+    tangible.Destructible_wall('wall.png', rand_cords[0], rand_cords[1], all_sprites, movable, destroyed)
+    count_walls += 1
 # for i in range(15):
 #     tangible.metallic_wall('wall.png', 128 * i, 0, all_sprites, walls_sprites)
 # for i in range(1, 10):
@@ -85,13 +108,20 @@ for i in range(2, 29, 2):
 #     tangible.metallic_wall('wall.png', 128 * i,  128 * 8, all_sprites, walls_sprites)
 while run:
     screen.fill(GREEN)
-    clock.tick(60)
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_UP:
-        #         player.update(pygame.K_UP)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_g:
+                bomb_cords = 0
+                player_cords = player.get_pos()
+                for i in cords:
+                    if player_cords[0] // 64 == i[0] // 64 and player_cords[1] // 64 == i[1] // 64:
+                        bomb_cords = i
+                        break
+                tangible.Bomb('bomb.png', bomb_cords[0], bomb_cords[1], all_sprites, movable, bomb)
+
         #     if event.key == pygame.K_DOWN:
         #         player.update(pygame.K_DOWN)
         #     if event.key == pygame.K_LEFT:
@@ -100,13 +130,13 @@ while run:
         #         player.update(pygame.K_RIGHT)
     lst_keys = pygame.key.get_pressed()
     if lst_keys[keys_p_one[3]]:
-        player.update('r', walls_sprites)
+        player.update('r', movable)
     if lst_keys[keys_p_one[1]]:
-        player.update('l', walls_sprites)
+        player.update('l', movable)
     if lst_keys[keys_p_one[0]]:
-        player.update('u', walls_sprites)
+        player.update('u', movable)
     if lst_keys[keys_p_one[2]]:
-        player.update('d', walls_sprites)
+        player.update('d', movable)
     all_sprites.draw(screen)
     pygame.display.flip()
 pygame.quit()
