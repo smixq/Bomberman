@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 wall_size = 64
 

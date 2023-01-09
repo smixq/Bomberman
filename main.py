@@ -10,7 +10,7 @@ pygame.display.set_caption('chumba, двигайся!')
 clock = pygame.time.Clock()
 BLACK = pygame.Color('#000000')
 WHITE = pygame.Color('white')
-GREEN = pygame.Color('green')
+GREEN = pygame.Color('#008635')
 run = True
 
 keys_p_one = [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]

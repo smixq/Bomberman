@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 p_speed = 4
 W, H = 1920, 1024
@@ -12,10 +13,10 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, image_name_up, image_name_right, image_name_down, image_name_left, x, y, *sprite_group):
         super().__init__(*sprite_group)
         self.frames = []
-        self.cut_sheet(load_image(image_name_up), 7, 1)
-        self.cut_sheet(load_image(image_name_right), 7, 1)
-        self.cut_sheet(load_image(image_name_down), 7, 1)
-        self.cut_sheet(load_image(image_name_left), 7, 1)
+        self.cut_sheet(load_image(image_name_up), 3, 1)
+        self.cut_sheet(load_image(image_name_right), 3, 1)
+        self.cut_sheet(load_image(image_name_down), 3, 1)
+        self.cut_sheet(load_image(image_name_left), 3, 1)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
@@ -34,9 +35,9 @@ class Player(pygame.sprite.Sprite):
         for j in range(rows):
             for i in range(columns):
                 # frame_location = (self.rect.w * i, self.rect.h * j)
-                frame_location = (80 * i, 0)
+                frame_location = (87 * i, 0)
                 self.frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, (47, 60))))
+                    frame_location, (48, 61))))
 
     def update(self, result, walls_group):
         # lst_keys = pygame.key.get_pressed()
@@ -55,18 +56,18 @@ class Player(pygame.sprite.Sprite):
                 self.der = 'u'
             elif result == 'r':
                 self.der = 'r'
-                self.cur_frame = 7
+                self.cur_frame = 3
             elif result == 'd':
                 self.der = 'd'
-                self.cur_frame = 14
+                self.cur_frame = 7
             elif result == 'l':
                 self.der = 'l'
-                self.cur_frame = 21
+                self.cur_frame = 9
 
         if result == 'r':
             self.cur_frame += 1
-            if self.cur_frame == 14:
-                self.cur_frame = 7
+            if self.cur_frame == 6:
+                self.cur_frame = 3
             self.image = self.frames[self.cur_frame]
             self.rect.x += p_speed
             if pygame.sprite.spritecollideany(self, walls_group):
@@ -82,8 +83,8 @@ class Player(pygame.sprite.Sprite):
 
         if result == 'l':
             self.cur_frame += 1
-            if self.cur_frame == 28:
-                self.cur_frame = 21
+            if self.cur_frame == 12:
+                self.cur_frame = 9
             self.image = self.frames[self.cur_frame]
             self.rect.x -= p_speed
             if pygame.sprite.spritecollideany(self, walls_group):
@@ -98,7 +99,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x += p_speed
 
         if result == 'u':
-            self.cur_frame = (self.cur_frame + 1) % 7
+            self.cur_frame = (self.cur_frame + 1) % 3
             self.image = self.frames[self.cur_frame]
             self.rect.y -= p_speed
             if pygame.sprite.spritecollideany(self, walls_group):
@@ -111,8 +112,8 @@ class Player(pygame.sprite.Sprite):
             #     self.rect.y += p_speed
         if result == 'd':
             self.cur_frame += 1
-            if self.cur_frame == 21:
-                self.cur_frame = 14
+            if self.cur_frame == 9:
+                self.cur_frame = 6
             self.image = self.frames[self.cur_frame]
             self.rect.y += p_speed
             if pygame.sprite.spritecollideany(self, walls_group):
