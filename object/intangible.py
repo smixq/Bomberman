@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
                 self.frames.append(sheet.subsurface(pygame.Rect(
                     frame_location, (48, 61))))
 
-    def update(self, result, walls_group):
+    def update(self, result, move, bomb, undestroed, destroyed):
         # lst_keys = pygame.key.get_pressed()
         # print(lst_keys)
         # if lst_keys[pygame.K_RIGHT]:
@@ -70,14 +70,16 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 3
             self.image = self.frames[self.cur_frame]
             self.rect.x += p_speed
-            if pygame.sprite.spritecollideany(self, walls_group):
+            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                  destroyed):
                 self.rect.x -= p_speed
             else:
                 self.rect.x += p_speed
-                if not pygame.sprite.spritecollideany(self, walls_group):
+                if not pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                          destroyed):
                     if shift + wall_size == self.rect.x and self.wall_site == 'l':
                         self.wall_site = 'r'
-                        walls_group.update('move', 'r')
+                        move.update('r')
                         self.rect.x = self.pos_one
                 self.rect.x -= p_speed
 
@@ -87,14 +89,16 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 9
             self.image = self.frames[self.cur_frame]
             self.rect.x -= p_speed
-            if pygame.sprite.spritecollideany(self, walls_group):
+            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                  destroyed):
                 self.rect.x += p_speed
             else:
                 self.rect.x -= p_speed
-                if not pygame.sprite.spritecollideany(self, walls_group):
+                if not pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                          destroyed):
                     if shift - wall_size == self.rect.x and self.wall_site == 'r':
                         self.wall_site = 'l'
-                        walls_group.update('move', 'l')
+                        move.update('l')
                         self.rect.x = self.pos_two
                 self.rect.x += p_speed
 
@@ -102,7 +106,8 @@ class Player(pygame.sprite.Sprite):
             self.cur_frame = (self.cur_frame + 1) % 3
             self.image = self.frames[self.cur_frame]
             self.rect.y -= p_speed
-            if pygame.sprite.spritecollideany(self, walls_group):
+            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                  destroyed):
                 self.rect.y += p_speed
             # else:
             #     self.rect.y -= p_speed
@@ -116,7 +121,8 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 6
             self.image = self.frames[self.cur_frame]
             self.rect.y += p_speed
-            if pygame.sprite.spritecollideany(self, walls_group):
+            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
+                                                                                                  destroyed):
                 self.rect.y -= p_speed
         # if pygame.sprite.spritecollideany(self, walls_group[0]):
         #     self.rect.y += p_speed
