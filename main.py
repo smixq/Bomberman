@@ -9,7 +9,7 @@ screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('chumba, двигайся!')
 clock = pygame.time.Clock()
 MYEVENTTYPE = pygame.USEREVENT + 1
-pygame.time.set_timer(MYEVENTTYPE, 200)
+pygame.time.set_timer(MYEVENTTYPE, 250)
 BLACK = pygame.Color('#000000')
 WHITE = pygame.Color('white')
 GREEN = pygame.Color('#008635')

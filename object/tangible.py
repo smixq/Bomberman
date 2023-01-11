@@ -3,6 +3,7 @@ import os
 import sys
 
 wall_size = 64
+explosive_range = 2
 
 
 class Metallic_wall(pygame.sprite.Sprite):
@@ -95,19 +96,27 @@ class Bomb(pygame.sprite.Sprite):
             self.image = self.frames[self.cur_frame]
         else:
             self.kill()
-            Explosive(self.rect.x, self.rect.y, 'exp.png', 'small_fire.png', 'midle_fire.png', 'big_fire.png',
-                      'max_fire.png', self.sprite_gr)
+            for i in range(1 , explosive_range):
+                if i == 1:
+                    Explosive(self.rect.x, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'midle',
+                              self.sprite_gr)
+                Explosive(self.rect.x - i * 64, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'horizontal',
+                          self.sprite_gr)
+                Explosive(self.rect.x + i * 64, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'horizontal',
+                          self.sprite_gr)
+                Explosive(self.rect.x, self.rect.y - i * 64, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'vertical',
+                          self.sprite_gr)
+                Explosive(self.rect.x, self.rect.y + i * 64, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'vertical',
+                          self.sprite_gr)
 
 
 class Explosive(pygame.sprite.Sprite):
-    def __init__(self, x, y, exp_image, small_exp_image, midle_exp_image, big_exp_image, max_exp_image, *sprite_group):
+    def __init__(self, x, y, exp_image, horizontal_exp_image, vertical_exp_image, exp_position, *sprite_group):
         super().__init__(*sprite_group)
         self.frames = []
         self.cut_sheet(load_image(exp_image, -1), 4, 1)
-        self.cut_sheet(load_image(small_exp_image, -1), 2, 1)
-        self.cut_sheet(load_image(midle_exp_image, -1), 2, 1)
-        self.cut_sheet(load_image(big_exp_image, -1), 2, 1)
-        self.cut_sheet(load_image(max_exp_image, -1), 2, 1)
+        self.cut_sheet(load_image(horizontal_exp_image, -1), 4, 1)
+        self.cut_sheet(load_image(vertical_exp_image, -1), 4, 1)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect()
@@ -116,6 +125,8 @@ class Explosive(pygame.sprite.Sprite):
         self.pos_one = x + wall_size
         self.pos_two = x - wall_size
         self.count_anim = 0
+        self.exp_pos = exp_position
+        self.is_introduced = False
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -135,6 +146,15 @@ class Explosive(pygame.sprite.Sprite):
 
     def animation(self):
         if self.count_anim <= 3:
+            if self.exp_pos == 'midle' and not self.is_introduced:
+                self.cur_frame = 0
+                self.is_introduced = True
+            elif self.exp_pos == 'horizontal' and not self.is_introduced:
+                self.cur_frame = 4
+                self.is_introduced = True
+            elif self.exp_pos == 'vertical' and not self.is_introduced:
+                self.cur_frame = 8
+                self.is_introduced = True
             self.count_anim += 1
             self.image = self.frames[self.cur_frame]
             self.cur_frame += 1
