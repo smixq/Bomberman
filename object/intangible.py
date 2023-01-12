@@ -10,13 +10,14 @@ shift = W // 2 + wall_size
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, image_name_up, image_name_right, image_name_down, image_name_left, x, y, *sprite_group):
-        super().__init__(*sprite_group)
+    def __init__(self, image_name_up, image_name_right, image_name_down, image_name_left, x, y, sprites_group):
+        self.sprites_group = sprites_group
+        super().__init__(*sprites_group[0:2])
         self.frames = []
-        self.cut_sheet(load_image(image_name_up), 3, 1)
-        self.cut_sheet(load_image(image_name_right), 3, 1)
-        self.cut_sheet(load_image(image_name_down), 3, 1)
-        self.cut_sheet(load_image(image_name_left), 3, 1)
+        self.cut_sheet(load_image(image_name_up, -1), 3, 1)
+        self.cut_sheet(load_image(image_name_right, -1), 3, 1)
+        self.cut_sheet(load_image(image_name_down, -1), 3, 1)
+        self.cut_sheet(load_image(image_name_left, -1), 3, 1)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.rect = self.rect.move(x, y)
@@ -35,11 +36,11 @@ class Player(pygame.sprite.Sprite):
         for j in range(rows):
             for i in range(columns):
                 # frame_location = (self.rect.w * i, self.rect.h * j)
-                frame_location = (87 * i, 0)
+                frame_location = (77 * i, 0)
                 self.frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, (48, 61))))
+                    frame_location, (42, 55))))
 
-    def update(self, result, move, bomb, undestroed, destroyed):
+    def update(self, result, bomb, undestroed, destroyed):
         # lst_keys = pygame.key.get_pressed()
         # print(lst_keys)
         # if lst_keys[pygame.K_RIGHT]:
@@ -70,16 +71,17 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 3
             self.image = self.frames[self.cur_frame]
             self.rect.x += p_speed
-            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                  destroyed):
+            if pygame.sprite.spritecollideany(self, self.sprites_group[3])\
+                    or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.x -= p_speed
             else:
                 self.rect.x += p_speed
-                if not pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                          destroyed):
+                if not pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
+                        or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                     if shift + wall_size == self.rect.x and self.wall_site == 'l':
                         self.wall_site = 'r'
-                        move.update('r')
+
+                        self.sprites_group[2].update('r')
                         self.rect.x = self.pos_one
                 self.rect.x -= p_speed
 
@@ -89,16 +91,16 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 9
             self.image = self.frames[self.cur_frame]
             self.rect.x -= p_speed
-            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                  destroyed):
+            if pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
+                    or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.x += p_speed
             else:
                 self.rect.x -= p_speed
-                if not pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                          destroyed):
+                if not pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
+                        or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                     if shift - wall_size == self.rect.x and self.wall_site == 'r':
                         self.wall_site = 'l'
-                        move.update('l')
+                        self.sprites_group[2].update('l')
                         self.rect.x = self.pos_two
                 self.rect.x += p_speed
 
@@ -106,8 +108,8 @@ class Player(pygame.sprite.Sprite):
             self.cur_frame = (self.cur_frame + 1) % 3
             self.image = self.frames[self.cur_frame]
             self.rect.y -= p_speed
-            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                  destroyed):
+            if pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
+                    or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.y += p_speed
             # else:
             #     self.rect.y -= p_speed
@@ -121,8 +123,8 @@ class Player(pygame.sprite.Sprite):
                 self.cur_frame = 6
             self.image = self.frames[self.cur_frame]
             self.rect.y += p_speed
-            if pygame.sprite.spritecollideany(self, undestroed) or pygame.sprite.spritecollideany(self,
-                                                                                                  destroyed):
+            if pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
+                    or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.y -= p_speed
         # if pygame.sprite.spritecollideany(self, walls_group[0]):
         #     self.rect.y += p_speed
@@ -143,4 +145,11 @@ def load_image(name, colorkey=None):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
+    if colorkey is not None:
+        image = image.convert()
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
+    else:
+        image = image.convert_alpha()
     return image

@@ -3,12 +3,13 @@ import os
 import sys
 
 wall_size = 64
-explosive_range = 2
+explosive_range = 5
 
 
 class Metallic_wall(pygame.sprite.Sprite):
-    def __init__(self, image_name, x, y, *sprite_group):
-        super().__init__(*sprite_group)
+    def __init__(self, image_name, x, y, sprites_group):
+        self.sprites_group = sprites_group
+        super().__init__(*(sprites_group[0], sprites_group[2], sprites_group[4]))
         self.image = load_image(image_name)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -28,8 +29,9 @@ class Metallic_wall(pygame.sprite.Sprite):
 
 
 class Destructible_wall(pygame.sprite.Sprite):
-    def __init__(self, image_name, x, y, *sprite_group):
-        super().__init__(*sprite_group)
+    def __init__(self, image_name, x, y, sprites_group):
+        self.sprites_group = sprites_group
+        super().__init__(*(sprites_group[0], sprites_group[2], sprites_group[3]))
         self.image = load_image(image_name)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -45,10 +47,9 @@ class Destructible_wall(pygame.sprite.Sprite):
 
 
 class Bomb(pygame.sprite.Sprite):
-    def __init__(self, image_bomb, x, y, *sprite_group):
-        self.sprite_gr = (sprite_group[0], sprite_group[1], sprite_group[3])
-        sprite_group = sprite_group[0:3]
-        super().__init__(*sprite_group)
+    def __init__(self, image_bomb, x, y, sprites_group):
+        self.sprites_group = sprites_group
+        super().__init__(*(sprites_group[0], sprites_group[2], sprites_group[5]))
         self.frames = []
         self.cut_sheet(load_image(image_bomb, -1), 3, 1)
         self.cur_frame = 0
@@ -96,23 +97,104 @@ class Bomb(pygame.sprite.Sprite):
             self.image = self.frames[self.cur_frame]
         else:
             self.kill()
-            for i in range(1 , explosive_range):
-                if i == 1:
-                    Explosive(self.rect.x, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'midle',
-                              self.sprite_gr)
-                Explosive(self.rect.x - i * 64, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'horizontal',
-                          self.sprite_gr)
-                Explosive(self.rect.x + i * 64, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'horizontal',
-                          self.sprite_gr)
-                Explosive(self.rect.x, self.rect.y - i * 64, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'vertical',
-                          self.sprite_gr)
-                Explosive(self.rect.x, self.rect.y + i * 64, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'vertical',
-                          self.sprite_gr)
+            self.explose()
+
+    def explose(self):
+        is_faced_left = False
+        is_faced_right = False
+        is_faced_top = False
+        is_faced_bottom = False
+        for i in range(1, explosive_range):
+            if i == 1:
+                Explosive(self.rect.x, self.rect.y, 'exp.png', 'horizontal.png', 'vertical_exp.png', 'midle',
+                          self.sprites_group)
+            explosive = Explosive(self.rect.x - i * 64, self.rect.y, 'exp.png', 'horizontal.png',
+                                  'vertical_exp.png', 'horizontal', self.sprites_group)
+            is_faced_left = exp_handling(explosive, is_faced_left, self)
+            # collide_met_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[4])
+            # collide_br_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[3])
+            # collide_bomb = pygame.sprite.spritecollideany(explosive, self.sprites_group[5])
+            # if is_faced_left:
+            #     explosive.kill()
+            # elif collide_met_wall:
+            #     explosive.kill()
+            #     is_faced_left = True
+            # elif collide_br_wall:
+            #     collide_br_wall.kill()
+            #     is_faced_left = True
+            #     explosive.kill()
+            # elif collide_bomb:
+            #     explosive.kill()
+            #     collide_bomb.kill()
+            #     collide_bomb.explose()
+            #     is_faced_left = True
+
+            explosive = Explosive(self.rect.x + i * 64, self.rect.y, 'exp.png', 'horizontal.png',
+                                  'vertical_exp.png', 'horizontal', self.sprites_group)
+            is_faced_right = exp_handling(explosive, is_faced_right, self)
+            # collide_met_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[4])
+            # collide_br_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[3])
+            # collide_bomb = pygame.sprite.spritecollideany(explosive, self.sprites_group[5])
+            # if is_faced_right:
+            #     explosive.kill()
+            # elif collide_met_wall:
+            #     explosive.kill()
+            #     is_faced_right = True
+            # elif collide_br_wall:
+            #     collide_br_wall.kill()
+            #     is_faced_right = True
+            #     explosive.kill()
+            # elif collide_bomb:
+            #     explosive.kill()
+            #     collide_bomb.kill()
+            #     collide_bomb.explose()
+            #     is_faced_right = True
+            explosive = Explosive(self.rect.x, self.rect.y - i * 64, 'exp.png', 'horizontal.png',
+                                  'vertical_exp.png', 'vertical', self.sprites_group)
+            is_faced_top = exp_handling(explosive, is_faced_top, self)
+            # collide_met_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[4])
+            # collide_br_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[3])
+            # collide_bomb = pygame.sprite.spritecollideany(explosive, self.sprites_group[5])
+            # if is_faced_top:
+            #     explosive.kill()
+            # elif collide_met_wall:
+            #     explosive.kill()
+            #     is_faced_top = True
+            # elif collide_br_wall:
+            #     collide_br_wall.kill()
+            #     is_faced_top = True
+            #     explosive.kill()
+            # elif collide_bomb:
+            #     explosive.kill()
+            #     collide_bomb.kill()
+            #     collide_bomb.explose()
+            #     is_faced_top = True
+            explosive = Explosive(self.rect.x, self.rect.y + i * 64, 'exp.png', 'horizontal.png',
+                                  'vertical_exp.png', 'vertical', self.sprites_group)
+            is_faced_bottom = exp_handling(explosive, is_faced_bottom, self)
+            # collide_met_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[4])
+            # collide_br_wall = pygame.sprite.spritecollideany(explosive, self.sprites_group[3])
+            # collide_bomb = pygame.sprite.spritecollideany(explosive, self.sprites_group[5])
+            # if is_faced_bottom:
+            #     explosive.kill()
+            # elif collide_met_wall:
+            #     explosive.kill()
+            #     is_faced_bottom = True
+            # elif collide_br_wall:
+            #     collide_br_wall.kill()
+            #     is_faced_bottom = True
+            #     explosive.kill()
+            # elif collide_bomb:
+            #     explosive.kill()
+            #     collide_bomb.kill()
+            #     collide_bomb.explose()
+            #     is_faced_bottom = True
 
 
 class Explosive(pygame.sprite.Sprite):
-    def __init__(self, x, y, exp_image, horizontal_exp_image, vertical_exp_image, exp_position, *sprite_group):
-        super().__init__(*sprite_group)
+    def __init__(self, x, y, exp_image, horizontal_exp_image, vertical_exp_image, exp_position, sprites_group):
+        self.sprites_group = sprites_group
+        super().__init__(*(sprites_group[0], sprites_group[2], sprites_group[6]))
         self.frames = []
         self.cut_sheet(load_image(exp_image, -1), 4, 1)
         self.cut_sheet(load_image(horizontal_exp_image, -1), 4, 1)
@@ -176,3 +258,25 @@ def load_image(name, colorkey=None):
     else:
         image = image.convert_alpha()
     return image
+
+
+def exp_handling(explosive, is_faced, bomb):
+
+    collide_met_wall = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[4])
+    collide_br_wall = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[3])
+    collide_bomb = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[5])
+    if is_faced:
+        explosive.kill()
+    elif collide_met_wall:
+        explosive.kill()
+        is_faced = True
+    elif collide_br_wall:
+        collide_br_wall.kill()
+        is_faced = True
+        explosive.kill()
+    elif collide_bomb:
+        explosive.kill()
+        collide_bomb.kill()
+        collide_bomb.explose()
+        is_faced = True
+    return is_faced

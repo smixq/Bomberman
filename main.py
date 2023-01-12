@@ -9,7 +9,7 @@ screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption('chumba, двигайся!')
 clock = pygame.time.Clock()
 MYEVENTTYPE = pygame.USEREVENT + 1
-pygame.time.set_timer(MYEVENTTYPE, 250)
+pygame.time.set_timer(MYEVENTTYPE, 475)
 BLACK = pygame.Color('#000000')
 WHITE = pygame.Color('white')
 GREEN = pygame.Color('#008635')
@@ -31,13 +31,29 @@ for y in range(2, 15):
             continue
         cords.append((x * wall_size, y * wall_size))
 
+sprites_group = []
+# 0
 all_sprites = pygame.sprite.Group()
+sprites_group.append(all_sprites)
+# 1
 intangible_sprites = pygame.sprite.Group()
+sprites_group.append(intangible_sprites)
+# 2
 movable = pygame.sprite.Group()
+sprites_group.append(movable)
+# 3
 destroyed = pygame.sprite.Group()
+sprites_group.append(destroyed)
+# 4
 undestroed = pygame.sprite.Group()
+sprites_group.append(undestroed)
+# 5
 bomb = pygame.sprite.Group()
+sprites_group.append(bomb)
+# 6
 explosive = pygame.sprite.Group()
+sprites_group.append(explosive)
+
 # hor_UP_walls = pygame.sprite.Group()
 # vert_LEFT_walls = pygame.sprite.Group()
 # hor_DOWN_walls = pygame.sprite.Group()
@@ -73,28 +89,31 @@ explosive = pygame.sprite.Group()
 
 
 player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png', 'Bomberman_left.png',
-                           wall_size, wall_size * 2, all_sprites, intangible_sprites)
+                           wall_size, wall_size * 2, sprites_group)
 for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, all_sprites, movable, undestroed)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, sprites_group)
 for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, all_sprites, movable, undestroed)
+    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, sprites_group)
 for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, all_sprites, movable, undestroed)
+    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, sprites_group)
 for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, all_sprites, movable, undestroed)
+    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, sprites_group)
 hoary_cords = []
 for i in range(2, 29, 2):
     for j in range(3, 14, 2):
         hoary_cords.append((wall_size * i, wall_size * j))
-        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, all_sprites, movable, undestroed)
+        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, sprites_group)
 count_walls = 0
-while count_walls != 10:
+while count_walls != 100:
     rand_cords = choice(cords)
     if rand_cords in hoary_cords:
         continue
     hoary_cords.append(rand_cords)
-    tangible.Destructible_wall('wall.png', rand_cords[0], rand_cords[1], all_sprites, movable, destroyed)
+    tangible.Destructible_wall('wall.jpg', rand_cords[0], rand_cords[1], sprites_group)
     count_walls += 1
+cords.append((64, 128))
+cords.append((64, 192))
+cords.append((128, 128))
 # for i in range(15):
 #     tangible.metallic_wall('wall.png', 128 * i, 0, all_sprites, walls_sprites)
 # for i in range(1, 10):
@@ -120,20 +139,22 @@ while run:
         if event.type == MYEVENTTYPE:
             for i in bomb:
                 i.animation()
-            for i in explosive:
-                i.animation()
             # bomb.update('animation')
             # explosive.update('animation')
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_g:
+            if event.key == pygame.K_SPACE:
                 bomb_cords = 0
                 player_cords = player.get_pos()
                 for i in cords:
                     if player_cords[0] // 64 == i[0] // 64 and player_cords[1] // 64 == i[1] // 64:
                         bomb_cords = i
                         break
-                tangible.Bomb('Bomb_sheet.png', bomb_cords[0], bomb_cords[1], all_sprites, movable, bomb,
-                              explosive)
+                is_not_new = True
+                for i in bomb:
+                    if i.rect.topleft == bomb_cords:
+                        is_not_new = False
+                if is_not_new:
+                    new_bomb = tangible.Bomb('Bomb_sheet.png', bomb_cords[0], bomb_cords[1], sprites_group)
 
         #     if event.key == pygame.K_DOWN:
         #         player.update(pygame.K_DOWN)
@@ -145,13 +166,15 @@ while run:
         player.kill()
     lst_keys = pygame.key.get_pressed()
     if lst_keys[keys_p_one[3]]:
-        player.update('r', movable, bomb, undestroed, destroyed)
+        player.update('r', bomb, undestroed, destroyed)
     if lst_keys[keys_p_one[1]]:
-        player.update('l', movable, bomb, undestroed, destroyed)
+        player.update('l', bomb, undestroed, destroyed)
     if lst_keys[keys_p_one[0]]:
-        player.update('u', movable, bomb, undestroed, destroyed)
+        player.update('u', bomb, undestroed, destroyed)
     if lst_keys[keys_p_one[2]]:
-        player.update('d', movable, bomb, undestroed, destroyed)
+        player.update('d', bomb, undestroed, destroyed)
+    for i in explosive:
+        i.animation()
     all_sprites.draw(screen)
     pygame.display.flip()
 pygame.quit()
