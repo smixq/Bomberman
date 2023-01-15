@@ -3,7 +3,7 @@ from random import choice
 import sys
 from object import intangible, tangible
 from functions.start_window import start_menu
-from data.all_sprites_groups import sprites_group
+from sprites.all_sprites_groups import sprites_group
 
 pygame.init()
 SIZE = W, H = 1920, 1024

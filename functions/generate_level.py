@@ -1,7 +1,10 @@
 from functions.load_image import load_image
 
-from data import block, door, player, road
-from sprites.all_sprites_groups import all_sprites, doors, roads, blocks
+from object.intangible import Player
+from object.tangible import Metallic_wall, Destructible_wall
+from sprites.all_sprites_groups import sprites_group
+
+wall_size = 64
 
 
 def generate_level(level, level_number):
@@ -12,7 +15,7 @@ def generate_level(level, level_number):
             if level[y][x] == '.':
                 road.Road(load_image(f'lvl{level_number}/road.png'), x, y, roads, all_sprites)
             elif level[y][x] == 'x':
-                block.Block(load_image(f'lvl{level_number}/block.png'), x, y, blocks, all_sprites)
+                Metallic_wall('Unbr_walls.jpg', x, y, sprites_group)
             elif level[y][x] == 'd':
                 road.Road(load_image(f'lvl{level_number}/road.png'), x, y, roads, all_sprites)
                 door.Door(load_image("door.png"), x, y, doors, all_sprites)
