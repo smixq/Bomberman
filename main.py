@@ -7,6 +7,7 @@ from sprites.all_sprites_groups import sprites_group
 from functions.generate_level import generate_level
 from functions.load_level import load_level
 from functions.random_level import random_level
+from functions.final_window import final_window
 
 pygame.init()
 SIZE = W, H = 1920, 1024
@@ -72,7 +73,7 @@ for y in range(2, 15):
 #         if result == 'd':
 #             self.rect.y += 5
 
-level = load_level('levels/level_one.txt')
+level = load_level('levels/level_clear.txt')
 level = random_level(level)
 player = generate_level(level)
 # player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png',
@@ -154,19 +155,36 @@ while run:
         #         player.update(pygame.K_LEFT)
         #     if event.key == pygame.K_RIGHT:
         #         player.update(pygame.K_RIGHT)w
+    # if pygame.sprite.spritecollideany(player, sprites_group[6]):
+    #     player.kill()
     if pygame.sprite.spritecollideany(player, sprites_group[6]):
         player.kill()
+        final_window(screen)
+        sys.exit()
+    monsters_collide = pygame.sprite.groupcollide(sprites_group[7], sprites_group[6], True, False)
+    if monsters_collide:
+        for obj in monsters_collide:
+            obj.kill()
+    if pygame.sprite.spritecollideany(player, sprites_group[7]):
+        player.kill()
+        final_window(screen)
+        sys.exit()
     lst_keys = pygame.key.get_pressed()
     if lst_keys[keys_p_one[3]]:
-        player.update('r', sprites_group[5], sprites_group[4], sprites_group[3])
+        player.update('r')
     if lst_keys[keys_p_one[1]]:
-        player.update('l', sprites_group[5], sprites_group[4], sprites_group[3])
+        player.update('l')
     if lst_keys[keys_p_one[0]]:
-        player.update('u', sprites_group[5], sprites_group[4], sprites_group[3])
+        player.update('u')
     if lst_keys[keys_p_one[2]]:
-        player.update('d', sprites_group[5], sprites_group[4], sprites_group[3])
+        player.update('d')
     for i in sprites_group[6]:
         i.animation()
+    for mobs in sprites_group[7]:
+        mobs.move()
     sprites_group[0].draw(screen)
     pygame.display.flip()
+    if len(sprites_group[7]) == 0:
+
+        sys.exit()
 pygame.quit()

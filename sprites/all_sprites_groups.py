@@ -22,3 +22,6 @@ sprites_group.append(bomb)
 # 6
 explosive = pygame.sprite.Group()
 sprites_group.append(explosive)
+# 7
+mobs = pygame.sprite.Group()
+sprites_group.append(mobs)

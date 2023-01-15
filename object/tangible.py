@@ -261,7 +261,6 @@ def load_image(name, colorkey=None):
 
 
 def exp_handling(explosive, is_faced, bomb):
-
     collide_met_wall = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[4])
     collide_br_wall = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[3])
     collide_bomb = pygame.sprite.spritecollideany(explosive, bomb.sprites_group[5])
