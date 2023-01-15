@@ -4,6 +4,9 @@ import sys
 from object import intangible, tangible
 from functions.start_window import start_menu
 from sprites.all_sprites_groups import sprites_group
+from functions.generate_level import generate_level
+from functions.load_level import load_level
+from functions.random_level import random_level
 
 pygame.init()
 SIZE = W, H = 1920, 1024
@@ -69,31 +72,33 @@ for y in range(2, 15):
 #         if result == 'd':
 #             self.rect.y += 5
 
-
-player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png',
-                           'Bomberman_left.png',
-                           wall_size, wall_size * 2, sprites_group)
-for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, sprites_group)
-for i in range(31):
-    tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, sprites_group)
-for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, sprites_group)
-for i in range(1, 15):
-    tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, sprites_group)
-hoary_cords = []
-for i in range(2, 29, 2):
-    for j in range(3, 14, 2):
-        hoary_cords.append((wall_size * i, wall_size * j))
-        tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, sprites_group)
-count_walls = 0
-while count_walls != 100:
-    rand_cords = choice(cords)
-    if rand_cords in hoary_cords:
-        continue
-    hoary_cords.append(rand_cords)
-    tangible.Destructible_wall('wall.jpg', rand_cords[0], rand_cords[1], sprites_group)
-    count_walls += 1
+level = load_level('levels/level_one.txt')
+level = random_level(level)
+player = generate_level(level)
+# player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png',
+#                            'Bomberman_left.png',
+#                            wall_size, wall_size * 2, sprites_group)
+# for i in range(31):
+#     tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, sprites_group)
+# for i in range(31):
+#     tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, H - wall_size, sprites_group)
+# for i in range(1, 15):
+#     tangible.Metallic_wall('Unbr_walls.jpg', 0, wall_size * i, sprites_group)
+# for i in range(1, 15):
+#     tangible.Metallic_wall('Unbr_walls.jpg', W, wall_size * i, sprites_group)
+# hoary_cords = []
+# for i in range(2, 29, 2):
+#     for j in range(3, 14, 2):
+#         hoary_cords.append((wall_size * i, wall_size * j))
+#         tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size * j, sprites_group)
+# count_walls = 0
+# while count_walls != 100:
+#     rand_cords = choice(cords)
+#     if rand_cords in hoary_cords:
+#         continue
+#     hoary_cords.append(rand_cords)
+#     tangible.Destructible_wall('wall.jpg', rand_cords[0], rand_cords[1], sprites_group)
+#     count_walls += 1
 cords.append((64, 128))
 cords.append((64, 192))
 cords.append((128, 128))
