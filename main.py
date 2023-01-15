@@ -2,6 +2,8 @@ import pygame
 from random import choice
 import sys
 from object import intangible, tangible
+from functions.start_window import start_menu
+from data.all_sprites_groups import sprites_group
 
 pygame.init()
 SIZE = W, H = 1920, 1024
@@ -14,6 +16,7 @@ BLACK = pygame.Color('#000000')
 WHITE = pygame.Color('white')
 GREEN = pygame.Color('#008635')
 run = True
+sprites_group = sprites_group
 
 keys_p_one = [pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d]
 keys_p_two = [pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT]
@@ -31,28 +34,7 @@ for y in range(2, 15):
             continue
         cords.append((x * wall_size, y * wall_size))
 
-sprites_group = []
-# 0
-all_sprites = pygame.sprite.Group()
-sprites_group.append(all_sprites)
-# 1
-intangible_sprites = pygame.sprite.Group()
-sprites_group.append(intangible_sprites)
-# 2
-movable = pygame.sprite.Group()
-sprites_group.append(movable)
-# 3
-destroyed = pygame.sprite.Group()
-sprites_group.append(destroyed)
-# 4
-undestroed = pygame.sprite.Group()
-sprites_group.append(undestroed)
-# 5
-bomb = pygame.sprite.Group()
-sprites_group.append(bomb)
-# 6
-explosive = pygame.sprite.Group()
-sprites_group.append(explosive)
+
 
 # hor_UP_walls = pygame.sprite.Group()
 # vert_LEFT_walls = pygame.sprite.Group()
@@ -88,7 +70,8 @@ sprites_group.append(explosive)
 #             self.rect.y += 5
 
 
-player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png', 'Bomberman_left.png',
+player = intangible.Player('Bomberman_up.png', 'Bomberman_right.png', 'Bomberman_down.png',
+                           'Bomberman_left.png',
                            wall_size, wall_size * 2, sprites_group)
 for i in range(31):
     tangible.Metallic_wall('Unbr_walls.jpg', wall_size * i, wall_size, sprites_group)
@@ -130,6 +113,7 @@ cords.append((128, 128))
 #     tangible.metallic_wall('wall.png', 128 * i,  128 * 6, all_sprites, walls_sprites)
 # for i in range(2, 13, 2):
 #     tangible.metallic_wall('wall.png', 128 * i,  128 * 8, all_sprites, walls_sprites)
+start_menu(screen)
 while run:
     screen.fill(GREEN)
     clock.tick(30)
@@ -137,11 +121,13 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == MYEVENTTYPE:
-            for i in bomb:
+            for i in sprites_group[5]:
                 i.animation()
             # bomb.update('animation')
             # explosive.update('animation')
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                sys.exit()
             if event.key == pygame.K_SPACE:
                 bomb_cords = 0
                 player_cords = player.get_pos()
@@ -150,11 +136,12 @@ while run:
                         bomb_cords = i
                         break
                 is_not_new = True
-                for i in bomb:
+                for i in sprites_group[5]:
                     if i.rect.topleft == bomb_cords:
                         is_not_new = False
                 if is_not_new:
-                    new_bomb = tangible.Bomb('Bomb_sheet.png', bomb_cords[0], bomb_cords[1], sprites_group)
+                    new_bomb = tangible.Bomb('Bomb_sheet.png', bomb_cords[0], bomb_cords[1],
+                                             sprites_group)
 
         #     if event.key == pygame.K_DOWN:
         #         player.update(pygame.K_DOWN)
@@ -162,19 +149,19 @@ while run:
         #         player.update(pygame.K_LEFT)
         #     if event.key == pygame.K_RIGHT:
         #         player.update(pygame.K_RIGHT)w
-    if pygame.sprite.spritecollideany(player, explosive):
+    if pygame.sprite.spritecollideany(player, sprites_group[6]):
         player.kill()
     lst_keys = pygame.key.get_pressed()
     if lst_keys[keys_p_one[3]]:
-        player.update('r', bomb, undestroed, destroyed)
+        player.update('r', sprites_group[5], sprites_group[4], sprites_group[3])
     if lst_keys[keys_p_one[1]]:
-        player.update('l', bomb, undestroed, destroyed)
+        player.update('l', sprites_group[5], sprites_group[4], sprites_group[3])
     if lst_keys[keys_p_one[0]]:
-        player.update('u', bomb, undestroed, destroyed)
+        player.update('u', sprites_group[5], sprites_group[4], sprites_group[3])
     if lst_keys[keys_p_one[2]]:
-        player.update('d', bomb, undestroed, destroyed)
-    for i in explosive:
+        player.update('d', sprites_group[5], sprites_group[4], sprites_group[3])
+    for i in sprites_group[6]:
         i.animation()
-    all_sprites.draw(screen)
+    sprites_group[0].draw(screen)
     pygame.display.flip()
 pygame.quit()
