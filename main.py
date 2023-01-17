@@ -71,7 +71,7 @@ while run:
                                              sprites_group)
     if pygame.sprite.spritecollideany(player, sprites_group[6]):
         player.kill()
-        final_window(screen)
+        final_window(screen, score)
         sys.exit()
     monsters_collide = pygame.sprite.groupcollide(sprites_group[7], sprites_group[6], True, False)
     if monsters_collide:
@@ -81,7 +81,7 @@ while run:
         factor_score = 1
     if pygame.sprite.spritecollideany(player, sprites_group[7]):
         player.kill()
-        final_window(screen)
+        final_window(screen, score)
         sys.exit()
     lst_keys = pygame.key.get_pressed()
     if lst_keys[keys_p_one[3]]:
@@ -103,5 +103,6 @@ while run:
     pygame.display.flip()
     if len(sprites_group[7]) == 0:
         RESIZED_FINAL_VIDEO.preview()
+        final_window(screen, score)
         sys.exit()
 pygame.quit()
