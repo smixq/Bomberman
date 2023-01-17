@@ -44,16 +44,6 @@ class Player(pygame.sprite.Sprite):
                     frame_location, (42, 55))))
 
     def update(self, result):
-        # lst_keys = pygame.key.get_pressed()
-        # print(lst_keys)
-        # if lst_keys[pygame.K_RIGHT]:
-        #     self.rect.x += 10
-        # elif args[0] == pygame.K_LEFT:
-        #     self.rect.x -= 10
-        # elif args[0] == pygame.K_UP:
-        #     self.rect.y -= 10
-        # elif args[0] == pygame.K_DOWN:
-        #     self.rect.y += 10
         if self.der != result:
             if result == 'u':
                 self.cur_frame = 0
@@ -114,12 +104,6 @@ class Player(pygame.sprite.Sprite):
             if pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
                     or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.y += p_speed
-            # else:
-            #     self.rect.y -= p_speed
-            #     if not pygame.sprite.spritecollideany(self, walls_group):
-            #         if self.rect.y + 140 <= H - 128 * 3:
-            #             walls_group.update('u')
-            #     self.rect.y += p_speed
         if result == 'd':
             self.cur_frame += 1
             if self.cur_frame == 9:
@@ -129,14 +113,6 @@ class Player(pygame.sprite.Sprite):
             if pygame.sprite.spritecollideany(self, self.sprites_group[3]) \
                     or pygame.sprite.spritecollideany(self, self.sprites_group[4]):
                 self.rect.y -= p_speed
-        # if pygame.sprite.spritecollideany(self, walls_group[0]):
-        #     self.rect.y += p_speed
-        # if pygame.sprite.spritecollideany(self, walls_group[1]):
-        #     self.rect.x += p_speed
-        # if pygame.sprite.spritecollideany(self, walls_group[2]):
-        #     self.rect.y -= p_speed
-        # if pygame.sprite.spritecollideany(self, walls_group[3]):
-        #     self.rect.x -= p_speed
 
     def get_pos(self):
         return self.rect.center
